@@ -38,7 +38,7 @@ namespace Sample
             m_MessageBuilder.Append(": ");
             m_MessageBuilder.Append(inputText);
             m_WebSocketClient.SendMessageToSocket(m_MessageBuilder.ToString());
-            //m_ClientView.ClearInputText();
+            m_ClientView.ClearInputText();
         }
         
         [SerializeField] private WebSocketClient m_WebSocketClient;

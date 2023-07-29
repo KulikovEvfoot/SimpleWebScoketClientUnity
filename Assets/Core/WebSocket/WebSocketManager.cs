@@ -36,8 +36,6 @@ namespace WebSocket
             }
             
             await m_Websocket.SendText(message);
-            
-            m_DispatchMessageQueueRoutine = DontDestroyCoroutineProvider.DoCoroutine(DispatchMessageQueueRoutine());
         }
 
         public void Close()
@@ -57,6 +55,12 @@ namespace WebSocket
             {
                 m_Websocket.SendText(EmptyValidJson);
             }
+        }
+
+        private void OnOpen()
+        {
+            m_DispatchMessageQueueRoutine = DontDestroyCoroutineProvider.DoCoroutine(DispatchMessageQueueRoutine());
+            m_OnOpen?.Invoke();
         }
 
         private void OnClose(WebSocketCloseCode closeCode)
@@ -88,17 +92,16 @@ namespace WebSocket
             m_OnClose = onClose;
             m_OnMessage = onMessage;
 
-            m_Websocket.OnOpen += m_OnOpen;
+            m_Websocket.OnOpen += OnOpen;
             m_Websocket.OnError += m_OnError;
             m_Websocket.OnClose += OnClose;
             m_Websocket.OnMessage += m_OnMessage;
             m_Websocket.OnMessage += PongOnMessage;
         }
-        
 
         private void Unsubscribe()
         {
-            m_Websocket.OnOpen -= m_OnOpen;
+            m_Websocket.OnOpen -= OnOpen;
             m_Websocket.OnError -= m_OnError;
             m_Websocket.OnClose -= OnClose;
             m_Websocket.OnMessage -= m_OnMessage;
